@@ -1,0 +1,44 @@
+$ Copyright (C) 2019-2020 R Cheung, Univeristy of Bristol
+
+$ This program is free software: you can redistribute it and/or modify
+$ it under the terms of the GNU General Public License as published by
+$ the Free Software Foundation, either version 3 of the License, or
+$ (at your option) any later version.
+$ 
+$ This program is distributed in the hope that it will be useful,
+$ but WITHOUT ANY WARRANTY; without even the implied warranty of
+$ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+$ GNU General Public License for more details.
+$ 
+$ You should have received a copy of the GNU General Public License
+$ along with this program.  If not, see <https://www.gnu.org/licenses/>.
+$-------2-------3-------4-------5-------6-------7-------8-------9-------T
+$ FEM of WINDY Wind Tunnel Model fitted with the 'Lite' Folding Wingtip
+$-------2-------3-------4-------5-------6-------7-------8-------9-------T
+$ Created: R Cheung
+$ Contact: r.c.m.cheung@bristol.ac.uk
+$ Modified: 11 June 2020
+$-------2-------3-------4-------5-------6-------7-------8-------9-------T
+$ Lite wing-tip
+$-------2-------3-------4-------5-------6-------7-------8-------9-------T
+PBEAML   4       3               BAR
+         .0163   .016
+GRID    401     1       .029105 .2059   -0.042-3
+CONM2    100     401     0      .349     0.      0.      0.
+*       2161.609-6      -13.807-6       614.774-6       -0.428-6
+*       -1.275-6        2741.992-6
+$ wing-tip mass
+CONM2   1001    402     0       .000008 0.      0.      0.
+*       8.257-6         .0              6.22-6          .0
+*       .0              11.166-6
+RBE3    503             402     123456  1.0     123456  209     210
+        211     212     213     214     215     221
+$-------2-------3-------4-------5-------6-------7-------8-------9-------T
+$ Internal mass position
+$-------2-------3-------4-------5-------6-------7-------8-------9-------T
+$ Position 0
+$GRID    402             .0      1.16    .0
+$ Position 5
+GRID    402     1        .0     .231    .0
+$ Position 10
+$GRID    402             .0      1.315   .0

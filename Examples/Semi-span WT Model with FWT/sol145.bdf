@@ -1,0 +1,112 @@
+$ Copyright (C) 2019-2020 R Cheung, Univeristy of Bristol
+
+$ This program is free software: you can redistribute it and/or modify
+$ it under the terms of the GNU General Public License as published by
+$ the Free Software Foundation, either version 3 of the License, or
+$ (at your option) any later version.
+$
+$ This program is distributed in the hope that it will be useful,
+$ but WITHOUT ANY WARRANTY; without even the implied warranty of
+$ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+$ GNU General Public License for more details.
+$
+$ You should have received a copy of the GNU General Public License
+$ along with this program.  If not, see <https://www.gnu.org/licenses/>.
+$-------2-------3-------4-------5-------6-------7-------8-------9-------T
+$ FEM of WINDY Wind Tunnel Model fitted with the 'Lite' Folding Wingtip
+$-------2-------3-------4-------5-------6-------7-------8-------9-------T
+$ Created: Fintan Healy
+$ Contact: fintan.healy@bristol.ac.uk
+$ Date: 08 February 2021
+$
+$ Change Log:
+$ 08 February 2021 - created a flutter solution from 144 sol
+$-------2-------3-------4-------5-------6-------7-------8-------9-------T
+NASTRAN NLINES=999999
+$ STATIC AEROELASTIC ANALYSIS
+SOL 145
+TIME 600
+CEND
+TITLE=WINDY - LITE FWT
+ECHO=NONE
+MAXLINES=999999999
+AECONFIG=AeroSG2D
+AESYMXZ=Symmetric
+AESYMXY=Asymmetric
+AEROF=ALL
+APRES=ALL
+DISPLACEMENT(SORT1,REAL)=ALL
+SPCFORCES(SORT1,REAL)=ALL
+STRESS(SORT1,REAL,VONMISES,BILIN)=ALL
+SUBCASE 1
+  SUBTITLE=Flutter
+  SPC=3
+  FMETHOD = 4
+  METHOD = 10
+  LOAD=11
+BEGIN BULK
+PARAM,POST,-2
+PARAM,WTMASS,1.
+PARAM,SNORM,20.
+PARAM,PRTMAXIM,YES
+MDLPRM,HDF5,0
+$ Gravity
+$-------2-------3-------4-------5-------6-------7-------8-------9-------T
+GRAV    11      0       9.81    0.0     0.0     -1.0
+$ SPC (wing fixed at the root)
+$-------2-------3-------4-------5-------6-------7-------8-------9-------T
+SPCADD  3       2
+SPC     2       1       123456
+$ Eigen Decomposition Method
+$-------2-------3-------4-------5-------6-------7-------8-------9-------T
+EIGR    10      MGIV                            8
+        MAX
+
+$ ================================ FEM ==================================
+$ include the coordinate system fo the folding wingtip
+INCLUDE 'fwt_coord_0.bdf'
+$ INCLUDE 'fwt_coord_45.bdf'
+
+$ include the FEM of the inner wing and hinge
+INCLUDE 'fem.bdf'
+
+$ include the wingtip FEM
+INCLUDE 'litewingtip.bdf'
+
+$ Hinge lock - comment out for free-hinge config.
+$ INCLUDE 'hingelock.bdf'
+
+
+$ ================================ Aero =================================
+$ include aero panels for inner wing and wingtip
+INCLUDE 'aero.bdf'
+
+$ select aero reference parameters
+AERO    0               .15     1.225
+$ set Mach numbers for the Aerodynamic matrices to be calculated at (at other 
+$ Mach Numbers the matrices will be interpolated)
+MKAERO1 .0
+        .05      .3      .6      1.0
+
+$ select number of mode to use in the eigen decompostion (important to do a 
+$ convergenece study on this parameter)
+PARAM   LMODES  10
+
+$ ============================== Flutter ================================
+
+$ set density ratio's to be tested
+$.1.....2.......3.......4.......5.......6.......7.......8.......9.......T
+FLFACT  1       1.
+$ set Mach numbers to be tested
+$.1.....2.......3.......4.......5.......6.......7.......8.......9.......T      
+FLFACT  2       0.
+$ set velocities to be tested
+$.1.....2.......3.......4.......5.......6.......7.......8.......9.......T      
+FLFACT  3       5.      10.     15.     20.     25.     30.     35.
+
+$ define: the flutter method to be used, the sid of the 3 FLFACT cards above,
+$ the interpolation routine and the number of modes to use in the analysis
+$.1.....2.......3.......4.......5.......6.......7.......8.......9.......T
+FLUTTER 4       PK      1       2       3       L       6       
+
+ENDDATA

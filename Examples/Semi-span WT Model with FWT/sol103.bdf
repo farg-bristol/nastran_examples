@@ -1,0 +1,65 @@
+$ Copyright (C) 2019-2020 R Cheung, Univeristy of Bristol
+
+$ This program is free software: you can redistribute it and/or modify
+$ it under the terms of the GNU General Public License as published by
+$ the Free Software Foundation, either version 3 of the License, or
+$ (at your option) any later version.
+$
+$ This program is distributed in the hope that it will be useful,
+$ but WITHOUT ANY WARRANTY; without even the implied warranty of
+$ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+$ GNU General Public License for more details.
+$
+$ You should have received a copy of the GNU General Public License
+$ along with this program.  If not, see <https://www.gnu.org/licenses/>.
+$-------2-------3-------4-------5-------6-------7-------8-------9-------T
+$ FEM of WINDY Wind Tunnel Model fitted with the 'Lite' Folding Wingtip
+$-------2-------3-------4-------5-------6-------7-------8-------9-------T
+$ Created: R Cheung
+$ Contact: r.c.m.cheung@bristol.ac.uk
+$ Modified: 08 December 2020
+$-------2-------3-------4-------5-------6-------7-------8-------9-------T
+NASTRAN NLINES=999999
+$ NORMAL MODE ANALYSIS
+SOL 103
+CEND
+TITLE=WINDY - LITE FWT
+ECHO=NONE
+MAXLINES=999999999
+VECTOR(SORT1,REAL)=ALL
+SUBCASE 1
+  SUBTITLE=NORMAL MODE ANALYSIS
+  SPC=3
+  METHOD=1
+BEGIN BULK
+PARAM,POST,0
+PARAM,WTMASS,1.
+PARAM,SNORM,20.
+PARAM,PRTMAXIM,YES
+MDLPRM,HDF5,0
+$-------2-------3-------4-------5-------6-------7-------8-------9-------T
+$ Method
+$-------2-------3-------4-------5-------6-------7-------8-------9-------T
+EIGRL   1                       10      0                       MASS
+$-------2-------3-------4-------5-------6-------7-------8-------9-------T
+
+$ ================================ FEM ==================================
+$ include the coordinate system fo the folding wingtip
+INCLUDE 'fwt_coord_0.bdf'
+$ INCLUDE 'fwt_coord_45.bdf'
+
+$ include the FEM of the inner wing and hinge
+INCLUDE 'fem.bdf'
+
+$ include the wingtip FEM
+INCLUDE 'litewingtip.bdf'
+
+$ Hinge lock - comment out for free-hinge config.
+$ INCLUDE 'hingelock.bdf'
+
+$-------2-------3-------4-------5-------6-------7-------8-------9-------T
+$ SPC - constrain the root
+$-------2-------3-------4-------5-------6-------7-------8-------9-------T
+SPCADD  3       2
+SPC     2       1       123456
+ENDDATA

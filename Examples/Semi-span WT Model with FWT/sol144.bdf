@@ -1,0 +1,93 @@
+$ Copyright (C) 2019-2020 R Cheung, Univeristy of Bristol
+
+$ This program is free software: you can redistribute it and/or modify
+$ it under the terms of the GNU General Public License as published by
+$ the Free Software Foundation, either version 3 of the License, or
+$ (at your option) any later version.
+$
+$ This program is distributed in the hope that it will be useful,
+$ but WITHOUT ANY WARRANTY; without even the implied warranty of
+$ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+$ GNU General Public License for more details.
+$
+$ You should have received a copy of the GNU General Public License
+$ along with this program.  If not, see <https://www.gnu.org/licenses/>.
+$-------2-------3-------4-------5-------6-------7-------8-------9-------T
+$ FEM of WINDY Wind Tunnel Model fitted with the 'Lite' Folding Wingtip
+$-------2-------3-------4-------5-------6-------7-------8-------9-------T
+$ Created: R Cheung
+$ Contact: r.c.m.cheung@bristol.ac.uk
+$ Date: 08 December 2020
+$
+$ Change Log:
+$ 08 February 2021 - (Fintan Healy) udpadated to 'deformable model'
+$-------2-------3-------4-------5-------6-------7-------8-------9-------T
+NASTRAN NLINES=999999
+$ STATIC AEROELASTIC ANALYSIS
+SOL 144
+TIME 600
+CEND
+TITLE=WINDY - LITE FWT
+ECHO=NONE
+MAXLINES=999999999
+AECONFIG=AeroSG2D
+AESYMXZ=Symmetric
+AESYMXY=Asymmetric
+AEROF=ALL
+APRES=ALL
+DISPLACEMENT(SORT1,REAL)=ALL
+SPCFORCES(SORT1,REAL)=ALL
+STRESS(SORT1,REAL,VONMISES,BILIN)=ALL
+SUBCASE 1
+  SUBTITLE=AOA5DEG
+  SPC=3
+  TRIM=1
+  LOAD=11
+BEGIN BULK
+$ PARAM,POST,0
+PARAM,WTMASS,1.
+PARAM,SNORM,20.
+PARAM,PRTMAXIM,YES
+MDLPRM,HDF5,0
+$ Gravity
+$-------2-------3-------4-------5-------6-------7-------8-------9-------T
+GRAV    11      0       9.81    0.0     0.0     -1.0
+$ SPC (wing fixed at the root)
+$-------2-------3-------4-------5-------6-------7-------8-------9-------T
+SPCADD  3       2
+SPC     2       1       123456
+$ Eigen Decomposition Method
+$-------2-------3-------4-------5-------6-------7-------8-------9-------T
+EIGR    10      MGIV                            8
+        MAX
+$ ================================ FEM ==================================
+$ include the coordinate system fo the folding wingtip
+INCLUDE 'fwt_coord_0.bdf'
+$ INCLUDE 'fwt_coord_45.bdf'
+
+$ include the FEM of the inner wing and hinge
+INCLUDE 'fem.bdf'
+
+$ include the wingtip FEM
+INCLUDE 'litewingtip.bdf'
+
+$ Hinge lock - comment out for free-hinge config.
+$ INCLUDE 'hingelock.bdf'
+
+
+$ ================================ Aero =================================
+$ include aero panels for inner wing and wingtip
+INCLUDE 'aero.bdf'
+
+$ set the aero refernce parameters
+$.1.....2.......3.......4.......5.......6.......7.......8.......9.......T
+AEROS   0       0       .15     1.345   .20175
+
+$ set the trim parameters for a wing at 5 degrees AoA and a velocity of 
+$ 30 m/s
+$.1.....2.......3.......4.......5.......6.......7.......8.......9.......T
+TRIM    1       .0612953270.1125ANGLEA  .0872665SIDES   0.              
+        ROLL    0.      PITCH   0.      YAW     0.      URDD1   0.      
+        URDD2   0.      URDD3   0.      URDD4   0.      URDD5   0.      
+        URDD6   0.      
+ENDDATA

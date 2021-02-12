@@ -1,0 +1,47 @@
+$ File information
+$
+$	- Created on  : 12-Feb-2021 09:53:07
+$	- Created by  : qe19391 (IT076600)
+$	- Matlab ver  : 9.6.0.1072779 (R2019a)
+$	- ALENA ver   : v0
+$ This file defines the 3 coordinate systems used to orientate the folding 
+$ wingtip on the WT FEM:
+$
+$   - SID = 1: this coordinate sytem defines the FWT local coordinate system,
+$               with an origin at the hinge, a y axis along the wingtip leading
+$               edge and a z axis perpendicular to the wingtip plane.
+$   - SID = 2: this coordinate sytem defines the hinge local coordinate system,
+$               with an origin at the hinge, an x axis pointing along the hinge
+$               line and a z axis perpendicular to the inner wing plane.
+$   - SID = 3: this coordinate sytem defines the FWT local aero coordinate 
+$               system, with an origin at the hinge, a x axis parrallel to the 
+$               global x axis and a z axis rotated off vertical by the fold 
+$               angle of the wingtip.
+$
+$ In this file the flare angle is 10 degrees and the fold angle is 0 degrees.
+$ The DMI cards adds a downwash to the wingtip aero panels to simulate there 
+$ local angle of attack at a non zero fold angle
+$
+$.1.....2.......3.......4.......5.......6.......7.......8.......9.......10......
+$ CORD2R: Defines a rectangular coordinate system using the coordinates of three
+$ points.
+$.1.....2...............3...............4...............5...............6.......
+CORD2R* 1               0               0.0000000       1.0065118       
+*       0.0000000       0.17364818      1.0065118       0.98480775      
+*       0.98480775      1.0065118       -0.17364818     
+$ CORD2R: Defines a rectangular coordinate system using the coordinates of three
+$ points.
+$.1.....2...............3...............4...............5...............6.......
+CORD2R* 2               0               0.0000000       1.0065118       
+*       0.0000000       0.17364818      1.0065118       0.98480775      
+*       0.96984631      0.83286363      -0.17101007     
+$ CORD2R: Defines a rectangular coordinate system using the coordinates of three
+$ points.
+$.1.....2...............3...............4...............5...............6.......
+CORD2R* 3               0               0.0000000       1.0065118       
+*       0.0000000       0.0000000       1.0065118       1.0000000       
+*       1.0000000       1.0065118       0.0000000       
+$ DMI card
+$.1.....2.......3.......4.......5.......6.......7.......8.......9.......10......
+DMI     W2GJ    0       2       1       0               550     1       
+DMI     W2GJ    1       1       .1745329THRU    550     
